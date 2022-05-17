@@ -85,6 +85,9 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   final Duration? _transitionDuration;
 
   @override
+  Color? get barrierColor => null;
+
+  @override
   Duration get transitionDuration =>
       _transitionDuration ?? super.transitionDuration;
 
