@@ -2,13 +2,17 @@ name: swipeable_page_route_example
 publish_to: none
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
 
 dependencies:
   flutter:
     sdk: flutter
   swipeable_page_route:
     path: ../
+
+dev_dependencies:
+  flutter_lints: ^2.0.2
 
 flutter:
   uses-material-design: true

@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- Template:
-## NEW · 2022-xx-xx
+## NEW · 2023-xx-xx
+
+### ⚠️ BREAKING CHANGES
 ### 🎉 New Features
 ### ⚡ Changes
 ### 🐛 Bug Fixes
@@ -13,6 +15,32 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 🏗️ Refactoring
 ### 📦 Build & CI
 -->
+
+## 0.4.0 · 2023-05-30
+
+### ⚠️ BREAKING CHANGES
+- make `swipeablePageRoute.canOnlySwipeFromEdge`, `.backGestureDetectionWidth`, and `.backGestureDetectionStartOffset` mutable and change `SwipeablePageRoute.buildPageTransitions(…)`'s corresponding parameters to `ValueGetter`s ([`2ad8bfb`](https://github.com/JonasWanke/swipeable_page_route/commit/2ad8bfb986ff687b169930d762925c1fb4adbafd)), closes: [#27](https://github.com/JonasWanke/swipeable_page_route/issues/27)
+
+### 🐛 Bug Fixes
+- fix `MorphingAppBar`'s title text color during swipe ([`fb0466d`](https://github.com/JonasWanke/swipeable_page_route/commit/fb0466d4e37cda4e1b64383de6ea90d77644c547))
+
+## 0.3.1 · 2023-05-16
+
+### 📦 Build & CI
+* upgrade to Flutter `>=3.10.0`, Dart `>=3.0.0 <4.0.0` ([`ff58ba7`](https://github.com/JonasWanke/swipeable_page_route/commit/ff58ba7c4f6d6f48c3945fb90031259b4d6b2999))
+* update `black_hole_flutter` to `^1.0.3` ([`0f114e2`](https://github.com/JonasWanke/swipeable_page_route/commit/0f114e2a4f9de0af19d716fa0d3fd8c564990e13))
+
+## 0.3.0 · 2023-01-24
+
+### ⚠️ BREAKING CHANGES
+* remove deprecated `appBar.`/`sliverAppBar.textTheme` ([`c0cb638`](https://github.com/JonasWanke/swipeable_page_route/commit/c0cb638b85025d3d9b30fac6c43bd547e8bb2614))
+
+### 🐛 Bug Fixes
+* use Flutter's update logic/fields for `AnimatedTitle`'s title style ([`341dc68`](https://github.com/JonasWanke/swipeable_page_route/commit/341dc687b56380fabe94143f3f99843c4f285673)), closes: [#21](https://github.com/JonasWanke/swipeable_page_route/issues/21)
+
+### 📦 Build & CI
+* upgrade to Flutter `>=3.3.0`, Dart `>=2.18.0 <3.0.0` ([`0ad5c9e`](https://github.com/JonasWanke/swipeable_page_route/commit/0ad5c9e7cd29a0b4c85df16219978f7eeaad9c95))
+* update `black_hole_flutter` to `^1.0.0` ([`9a43d1b`](https://github.com/JonasWanke/swipeable_page_route/commit/9a43d1bc7a19d338950eba2d789953523418d20d))
 
 ## 0.2.6 · 2022-01-14
 

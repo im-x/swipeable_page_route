@@ -15,7 +15,7 @@ class AnimatedActions extends MultiChildRenderObjectWidget {
     final childIconTheme = state.child.actionsIconTheme;
     final parentActions = state.parent.appBar.actions ?? [];
     final childActions = state.child.appBar.actions ?? [];
-    Iterable<Operation<Widget>> difference = diffSync<Widget>(
+    Iterable<Operation<Widget>> difference = diffSync(
       parentActions,
       childActions,
       areEqual: Widget.canUpdate,
@@ -120,7 +120,7 @@ class AnimatedActions extends MultiChildRenderObjectWidget {
       children: children,
     );
   }
-  AnimatedActions._({
+  const AnimatedActions._({
     required this.t,
     required List<_ActionGroupType> groups,
     required List<_AnimatedActionsParentDataWidget> children,
@@ -131,16 +131,15 @@ class AnimatedActions extends MultiChildRenderObjectWidget {
   final List<_ActionGroupType> _groups;
 
   @override
-  RenderObject createRenderObject(BuildContext context) {
-    return _AnimatedActionsLayout(t: t, groups: _groups);
-  }
+  RenderObject createRenderObject(BuildContext context) =>
+      _AnimatedActionsLayout(t: t, groups: _groups);
 
   @override
   void updateRenderObject(
     BuildContext context,
-    covariant _AnimatedActionsLayout renderObject,
+    covariant RenderObject renderObject,
   ) {
-    renderObject
+    (renderObject as _AnimatedActionsLayout)
       ..t = t
       ..groups = _groups;
   }
@@ -149,11 +148,10 @@ class AnimatedActions extends MultiChildRenderObjectWidget {
 class _AnimatedActionsParentDataWidget
     extends ParentDataWidget<_AnimatedActionsParentData> {
   const _AnimatedActionsParentDataWidget({
-    Key? key,
     required this.position,
     required this.groupIndex,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   final _ActionPosition position;
   final int groupIndex;
@@ -185,6 +183,7 @@ class _AnimatedActionsParentDataWidget
 }
 
 enum _ActionPosition { parent, child }
+
 enum _ActionGroupType { stays, changes }
 
 class _AnimatedActionsParentData extends ContainerBoxParentData<RenderBox> {
@@ -195,10 +194,9 @@ class _AnimatedActionsParentData extends ContainerBoxParentData<RenderBox> {
 class _AnimatedActionsLayout
     extends AnimatedAppBarLayout<_AnimatedActionsParentData> {
   _AnimatedActionsLayout({
-    double t = 0,
+    super.t,
     required List<_ActionGroupType> groups,
-  })  : _groups = groups,
-        super(t: t);
+  }) : _groups = groups;
 
   List<_ActionGroupType> _groups;
   List<_ActionGroupType> get groups => _groups;
@@ -242,14 +240,8 @@ class _AnimatedActionsLayout
   @override
   double computeMinIntrinsicHeight(double width) {
     return lerpDouble(
-      _parentChildren
-              .map<num>((c) => c.getMinIntrinsicHeight(width))
-              .minOrNull ??
-          0,
-      _childChildren
-              .map<num>((c) => c.getMinIntrinsicHeight(width))
-              .minOrNull ??
-          0,
+      _parentChildren.map((c) => c.getMinIntrinsicHeight(width)).minOrNull ?? 0,
+      _childChildren.map((c) => c.getMinIntrinsicHeight(width)).minOrNull ?? 0,
       t,
     )!;
   }
@@ -257,14 +249,8 @@ class _AnimatedActionsLayout
   @override
   double computeMaxIntrinsicHeight(double width) {
     return lerpDouble(
-      _parentChildren
-              .map<num>((c) => c.getMaxIntrinsicHeight(width))
-              .maxOrNull ??
-          0,
-      _childChildren
-              .map<num>((c) => c.getMaxIntrinsicHeight(width))
-              .maxOrNull ??
-          0,
+      _parentChildren.map((c) => c.getMaxIntrinsicHeight(width)).maxOrNull ?? 0,
+      _childChildren.map((c) => c.getMaxIntrinsicHeight(width)).maxOrNull ?? 0,
       t,
     )!;
   }

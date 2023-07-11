@@ -7,7 +7,7 @@ import 'app_bar.dart';
 import 'state.dart';
 
 class AnimatedBottom extends AnimatedAppBarPart implements PreferredSizeWidget {
-  const AnimatedBottom(MorphingState state) : super(state);
+  const AnimatedBottom(super.state);
 
   @override
   Size get preferredSize => Size.fromHeight(preferredHeight);
@@ -27,7 +27,7 @@ class AnimatedBottom extends AnimatedAppBarPart implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final hasParent = parent.appBar.bottom != null;
     final hasChild = child.appBar.bottom != null;
-    if (!hasParent && !hasChild) return SizedBox();
+    if (!hasParent && !hasChild) return const SizedBox();
 
     if (hasParent &&
         hasChild &&
@@ -35,18 +35,16 @@ class AnimatedBottom extends AnimatedAppBarPart implements PreferredSizeWidget {
       // Do a simple crossfade.
       return SizedBox(
         height: preferredHeight,
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              top: null,
-              child: Opacity(opacity: 1 - t, child: parent.appBar.bottom),
-            ),
-            Positioned.fill(
-              top: null,
-              child: Opacity(opacity: t, child: child.appBar.bottom),
-            ),
-          ],
-        ),
+        child: Stack(children: [
+          Positioned.fill(
+            top: null,
+            child: Opacity(opacity: 1 - t, child: parent.appBar.bottom),
+          ),
+          Positioned.fill(
+            top: null,
+            child: Opacity(opacity: t, child: child.appBar.bottom),
+          ),
+        ]),
       );
     }
 
@@ -62,20 +60,18 @@ class AnimatedBottom extends AnimatedAppBarPart implements PreferredSizeWidget {
           hasChild: hasChild,
         ),
         blendMode: BlendMode.dstOut,
-        child: Stack(
-          children: <Widget>[
-            if (hasParent && t < parentEnd)
-              Positioned.fill(
-                top: null,
-                child: Center(child: parent.appBar.bottom),
-              ),
-            if (hasChild && t > childStart)
-              Positioned.fill(
-                top: null,
-                child: Center(child: child.appBar.bottom),
-              ),
-          ],
-        ),
+        child: Stack(children: [
+          if (hasParent && t < parentEnd)
+            Positioned.fill(
+              top: null,
+              child: Center(child: parent.appBar.bottom),
+            ),
+          if (hasChild && t > childStart)
+            Positioned.fill(
+              top: null,
+              child: Center(child: child.appBar.bottom),
+            ),
+        ]),
       ),
     );
   }

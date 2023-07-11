@@ -42,9 +42,9 @@ class SwipeablePageTransitionsBuilder extends PageTransitionsBuilder {
       animation,
       secondaryAnimation,
       child,
-      canOnlySwipeFromEdge: canOnlySwipeFromEdge,
-      backGestureDetectionWidth: backGestureDetectionWidth,
-      backGestureDetectionStartOffset: backGestureDetectionStartOffset,
+      canOnlySwipeFromEdge: () => canOnlySwipeFromEdge,
+      backGestureDetectionWidth: () => backGestureDetectionWidth,
+      backGestureDetectionStartOffset: () => backGestureDetectionStartOffset,
       transitionBuilder: transitionBuilder,
     );
   }
@@ -58,23 +58,16 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
     this.canOnlySwipeFromEdge = false,
     this.backGestureDetectionWidth = kMinInteractiveDimension,
     this.backGestureDetectionStartOffset = 0.0,
-    required WidgetBuilder builder,
-    String? title,
-    RouteSettings? settings,
-    bool maintainState = true,
-    bool fullscreenDialog = false,
+    required super.builder,
+    super.title,
+    super.settings,
+    super.maintainState,
+    super.fullscreenDialog,
     Duration? transitionDuration,
     SwipeableTransitionBuilder? transitionBuilder,
   })  : _transitionDuration = transitionDuration,
         transitionBuilder =
-            transitionBuilder ?? _defaultTransitionBuilder(fullscreenDialog),
-        super(
-          builder: builder,
-          title: title,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-        );
+            transitionBuilder ?? _defaultTransitionBuilder(fullscreenDialog);
 
   /// Whether the user can swipe to navigate back.
   ///
@@ -99,18 +92,18 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   /// If set to `true`, this distance can be controlled via
   /// [backGestureDetectionWidth].
   /// If set to `false`, the user can start dragging anywhere on the screen.
-  final bool canOnlySwipeFromEdge;
+  bool canOnlySwipeFromEdge;
 
   /// If [canOnlySwipeFromEdge] is set to `true`, this value controls the width
   /// of the gesture detection area.
   ///
   /// For comparison, in [CupertinoPageRoute] this value is `20`.
-  final double backGestureDetectionWidth;
+  double backGestureDetectionWidth;
 
   /// If [canOnlySwipeFromEdge] is set to `true`, this value controls how far
   /// away from the left (LTR) or right (RTL) screen edge a gesture must start
   /// to be recognized for back navigation.
-  final double backGestureDetectionStartOffset;
+  double backGestureDetectionStartOffset;
 
   /// Custom builder to wrap the child widget.
   ///
@@ -206,9 +199,9 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
       secondaryAnimation,
       child,
       canSwipe: () => canSwipe,
-      canOnlySwipeFromEdge: canOnlySwipeFromEdge,
-      backGestureDetectionWidth: backGestureDetectionWidth,
-      backGestureDetectionStartOffset: backGestureDetectionStartOffset,
+      canOnlySwipeFromEdge: () => canOnlySwipeFromEdge,
+      backGestureDetectionWidth: () => backGestureDetectionWidth,
+      backGestureDetectionStartOffset: () => backGestureDetectionStartOffset,
       transitionBuilder: transitionBuilder,
     );
   }
@@ -220,9 +213,11 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child, {
     ValueGetter<bool> canSwipe = _defaultCanSwipe,
-    bool canOnlySwipeFromEdge = false,
-    double backGestureDetectionWidth = kMinInteractiveDimension,
-    double backGestureDetectionStartOffset = 0,
+    ValueGetter<bool> canOnlySwipeFromEdge = _defaultCanOnlySwipeFromEdge,
+    ValueGetter<double> backGestureDetectionWidth =
+        _defaultBackGestureDetectionWidth,
+    ValueGetter<double> backGestureDetectionStartOffset =
+        _defaultBackGestureDetectionStartOffset,
     SwipeableTransitionBuilder? transitionBuilder,
   }) {
     final Widget wrappedChild;
@@ -254,12 +249,16 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   }
 
   static bool _defaultCanSwipe() => true;
+  static bool _defaultCanOnlySwipeFromEdge() => false;
+  static double _defaultBackGestureDetectionWidth() => kMinInteractiveDimension;
+  static double _defaultBackGestureDetectionStartOffset() => 0;
 }
 
 typedef SwipeableTransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaryAnimation,
+  // ignore: avoid_positional_boolean_parameters
   bool isSwipeGesture,
   Widget child,
 );
@@ -287,18 +286,18 @@ const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 // An adapted version of `_CupertinoBackGestureDetector`.
 class _FancyBackGestureDetector<T> extends StatefulWidget {
   const _FancyBackGestureDetector({
-    Key? key,
+    super.key,
     required this.canOnlySwipeFromEdge,
     required this.backGestureDetectionWidth,
     required this.backGestureDetectionStartOffset,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
-  }) : super(key: key);
+  });
 
-  final bool canOnlySwipeFromEdge;
-  final double backGestureDetectionWidth;
-  final double backGestureDetectionStartOffset;
+  final ValueGetter<bool> canOnlySwipeFromEdge;
+  final ValueGetter<double> backGestureDetectionWidth;
+  final ValueGetter<double> backGestureDetectionStartOffset;
 
   final Widget child;
   final ValueGetter<bool> enabledCallback;
@@ -312,8 +311,49 @@ class _FancyBackGestureDetector<T> extends StatefulWidget {
 class _FancyBackGestureDetectorState<T>
     extends State<_FancyBackGestureDetector<T>> {
   _CupertinoBackGestureController<T>? _backGestureController;
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasDirectionality(context));
 
-  void _handleDragStart(DragStartDetails details) {
+    final gestureDetector = RawGestureDetector(
+      behavior: HitTestBehavior.translucent,
+      gestures: {
+        _DirectionDependentDragGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<
+                _DirectionDependentDragGestureRecognizer>(
+          _gestureRecognizerConstructor,
+          (instance) => instance
+            ..onStart = _handleDragStart
+            ..onUpdate = _handleDragUpdate
+            ..onEnd = _handleDragEnd
+            ..onCancel = _handleDragCancel,
+        ),
+      },
+    );
+
+    return Stack(
+      fit: StackFit.passthrough,
+      children: [widget.child, Positioned.fill(child: gestureDetector)],
+    );
+  }
+
+  _DirectionDependentDragGestureRecognizer _gestureRecognizerConstructor() {
+    final directionality = context.directionality;
+    return _DirectionDependentDragGestureRecognizer(
+      debugOwner: this,
+      directionality: directionality,
+      checkStartedCallback: () => _backGestureController != null,
+      enabledCallback: widget.enabledCallback,
+      detectionArea: () => widget.canOnlySwipeFromEdge()
+          ? (
+              startOffset: widget.backGestureDetectionStartOffset(),
+              width: _dragAreaWidth(context),
+            )
+          : null,
+    );
+  }
+
+  void _handleDragStart(DragStartDetails _) {
     assert(mounted);
     assert(_backGestureController == null);
     _backGestureController = widget.onStartPopGesture();
@@ -345,68 +385,20 @@ class _FancyBackGestureDetectorState<T>
   }
 
   double _convertToLogical(double value) {
-    switch (context.directionality) {
-      case TextDirection.rtl:
-        return -value;
-      case TextDirection.ltr:
-        return value;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
-
-    final gestureDetector = RawGestureDetector(
-      behavior: HitTestBehavior.translucent,
-      gestures: {
-        _DirectionDependentDragGestureRecognizer:
-            GestureRecognizerFactoryWithHandlers<
-                _DirectionDependentDragGestureRecognizer>(
-          () {
-            final directionality = context.directionality;
-            return _DirectionDependentDragGestureRecognizer(
-              debugOwner: this,
-              canDragToLeft: directionality == TextDirection.rtl,
-              canDragToRight: directionality == TextDirection.ltr,
-              checkStartedCallback: () => _backGestureController != null,
-              enabledCallback: widget.enabledCallback,
-            );
-          },
-          (instance) => instance
-            ..onStart = _handleDragStart
-            ..onUpdate = _handleDragUpdate
-            ..onEnd = _handleDragEnd
-            ..onCancel = _handleDragCancel,
-        )
-      },
-    );
-
-    return Stack(
-      fit: StackFit.passthrough,
-      children: [
-        widget.child,
-        if (widget.canOnlySwipeFromEdge)
-          PositionedDirectional(
-            start: widget.backGestureDetectionStartOffset,
-            width: _dragAreaWidth(context),
-            top: 0,
-            bottom: 0,
-            child: gestureDetector,
-          )
-        else
-          Positioned.fill(child: gestureDetector),
-      ],
-    );
+    return switch (context.directionality) {
+      TextDirection.rtl => -value,
+      TextDirection.ltr => value,
+    };
   }
 
   double _dragAreaWidth(BuildContext context) {
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    final dragAreaWidth = context.directionality == TextDirection.ltr
-        ? context.mediaQuery.padding.left
-        : context.mediaQuery.padding.right;
-    return math.max(dragAreaWidth, widget.backGestureDetectionWidth);
+    final dragAreaWidth = switch (context.directionality) {
+      TextDirection.ltr => context.mediaQuery.padding.left,
+      TextDirection.rtl => context.mediaQuery.padding.right,
+    };
+    return math.max(dragAreaWidth, widget.backGestureDetectionWidth());
   }
 }
 
@@ -508,29 +500,50 @@ class _CupertinoBackGestureController<T> {
 class _DirectionDependentDragGestureRecognizer
     extends HorizontalDragGestureRecognizer {
   _DirectionDependentDragGestureRecognizer({
-    required this.canDragToLeft,
-    required this.canDragToRight,
+    required this.directionality,
     required this.enabledCallback,
+    required this.detectionArea,
     required this.checkStartedCallback,
-    Object? debugOwner,
-  }) : super(debugOwner: debugOwner);
+    super.debugOwner,
+  });
 
-  final bool canDragToLeft;
-  final bool canDragToRight;
+  final TextDirection directionality;
   final ValueGetter<bool> enabledCallback;
+  final ValueGetter<_DetectionArea?> detectionArea;
   final ValueGetter<bool> checkStartedCallback;
 
   @override
   void handleEvent(PointerEvent event) {
-    final delta = event.delta.dx;
-    if (checkStartedCallback() ||
-        enabledCallback() &&
-            (canDragToLeft && delta < 0 ||
-                canDragToRight && delta > 0 ||
-                delta == 0)) {
+    if (_shouldHandle(event)) {
       super.handleEvent(event);
     } else {
       stopTrackingPointer(event.pointer);
     }
   }
+
+  bool _shouldHandle(PointerEvent event) {
+    if (checkStartedCallback()) return true;
+    if (!enabledCallback()) return false;
+
+    final isCorrectDirection = switch ((directionality, event.delta.dx)) {
+      (TextDirection.ltr, > 0) => true,
+      (TextDirection.rtl, < 0) => true,
+      (_, 0) => true,
+      _ => false,
+    };
+    if (!isCorrectDirection) return false;
+
+    final detectionArea = this.detectionArea();
+    final x = event.localPosition.dx;
+    if (detectionArea != null &&
+        event is PointerDownEvent &&
+        (x < detectionArea.startOffset ||
+            x > detectionArea.startOffset + detectionArea.width)) {
+      return false;
+    }
+
+    return true;
+  }
 }
+
+typedef _DetectionArea = ({double startOffset, double width});

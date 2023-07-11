@@ -13,7 +13,7 @@ import 'app_bar.dart';
 // `_SliverAppBarDelegate` and `_FloatingAppBar` is private…
 
 class _FloatingAppBar extends StatefulWidget {
-  const _FloatingAppBar({Key? key, required this.child}) : super(key: key);
+  const _FloatingAppBar({required this.child});
 
   final Widget child;
 
@@ -30,7 +30,7 @@ class _FloatingAppBarState extends State<_FloatingAppBar> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _position?.isScrollingNotifier.removeListener(_isScrollingListener);
-    _position = Scrollable.of(context)?.position;
+    _position = Scrollable.of(context).position;
     _position?.isScrollingNotifier.addListener(_isScrollingListener);
   }
 
@@ -78,7 +78,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     required this.foregroundColor,
     required this.iconTheme,
     required this.actionsIconTheme,
-    required this.textTheme,
     required this.primary,
     required this.centerTitle,
     required this.excludeHeaderSemantics,
@@ -108,6 +107,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         ),
         _bottomHeight = bottom?.preferredSize.height ?? 0;
 
+  // ignore: no-object-declaration
   final Object heroTag;
   final Widget? leading;
   final bool automaticallyImplyLeading;
@@ -122,7 +122,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Color? foregroundColor;
   final IconThemeData? iconTheme;
   final IconThemeData? actionsIconTheme;
-  final TextTheme? textTheme;
   final bool primary;
   final bool? centerTitle;
   final bool excludeHeaderSemantics;
@@ -144,9 +143,12 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => collapsedHeight;
 
   @override
-  double get maxExtent => math.max(
+  double get maxExtent {
+    return math.max(
       topPadding + (expandedHeight ?? kToolbarHeight + _bottomHeight),
-      minExtent);
+      minExtent,
+    );
+  }
 
   @override
   final TickerProvider? vsync;
@@ -210,7 +212,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         foregroundColor: foregroundColor,
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
-        textTheme: textTheme,
         primary: primary,
         centerTitle: centerTitle,
         excludeHeaderSemantics: excludeHeaderSemantics,
@@ -246,7 +247,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         foregroundColor != oldDelegate.foregroundColor ||
         iconTheme != oldDelegate.iconTheme ||
         actionsIconTheme != oldDelegate.actionsIconTheme ||
-        textTheme != oldDelegate.textTheme ||
         primary != oldDelegate.primary ||
         centerTitle != oldDelegate.centerTitle ||
         titleSpacing != oldDelegate.titleSpacing ||
@@ -279,7 +279,7 @@ class MorphingSliverAppBar extends StatefulWidget {
   /// The arguments [forceElevated], [primary], [floating], [pinned], [snap]
   /// and [automaticallyImplyLeading] must not be null.
   const MorphingSliverAppBar({
-    Key? key,
+    super.key,
     this.heroTag = 'MorphingAppBar',
     this.leading,
     this.automaticallyImplyLeading = true,
@@ -294,7 +294,6 @@ class MorphingSliverAppBar extends StatefulWidget {
     this.foregroundColor,
     this.iconTheme,
     this.actionsIconTheme,
-    this.textTheme,
     this.primary = true,
     this.centerTitle,
     this.excludeHeaderSemantics = false,
@@ -321,10 +320,10 @@ class MorphingSliverAppBar extends StatefulWidget {
         assert(
           collapsedHeight == null || collapsedHeight >= toolbarHeight,
           'The "collapsedHeight" argument has to be larger than or equal to [toolbarHeight].',
-        ),
-        super(key: key);
+        );
 
   /// Tag used for the internally created [Hero] widget.
+  // ignore: no-object-declaration
   final Object heroTag;
 
   /// See [SliverAppBar.leading].
@@ -365,9 +364,6 @@ class MorphingSliverAppBar extends StatefulWidget {
 
   /// See [SliverAppBar.actionsIconTheme].
   final IconThemeData? actionsIconTheme;
-
-  /// See [SliverAppBar.textTheme].
-  final TextTheme? textTheme;
 
   /// See [SliverAppBar.primary].
   final bool primary;
@@ -424,7 +420,7 @@ class MorphingSliverAppBar extends StatefulWidget {
   final SystemUiOverlayStyle? systemOverlayStyle;
 
   @override
-  _SliverAppBarState createState() => _SliverAppBarState();
+  State<MorphingSliverAppBar> createState() => _SliverAppBarState();
 }
 
 // This class is only stateful because it owns the TickerProvider used
@@ -447,7 +443,8 @@ class _SliverAppBarState extends State<MorphingSliverAppBar>
 
     _showOnScreenConfiguration = widget.floating & widget.snap
         ? const PersistentHeaderShowOnScreenConfiguration(
-            minShowOnScreenExtent: double.infinity)
+            minShowOnScreenExtent: double.infinity,
+          )
         : null;
   }
 
@@ -514,7 +511,6 @@ class _SliverAppBarState extends State<MorphingSliverAppBar>
           foregroundColor: widget.foregroundColor,
           iconTheme: widget.iconTheme,
           actionsIconTheme: widget.actionsIconTheme,
-          textTheme: widget.textTheme,
           primary: widget.primary,
           centerTitle: widget.centerTitle,
           excludeHeaderSemantics: widget.excludeHeaderSemantics,

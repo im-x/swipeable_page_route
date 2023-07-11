@@ -19,15 +19,13 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MorphingAppBar(
-        title: Text('🔙 swipeable_page_route example'),
+        title: const Text('🔙 swipeable_page_route example'),
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () {
-            context.navigator
-                .push<void>(SwipeablePageRoute(builder: (_) => SecondPage()));
-          },
-          child: Text('Open page 2'),
+          onPressed: () => context.navigator
+              .push<void>(SwipeablePageRoute(builder: (_) => SecondPage())),
+          child: const Text('Open page 2'),
         ),
       ),
     );
@@ -36,7 +34,7 @@ class FirstPage extends StatelessWidget {
 
 class SecondPage extends StatefulWidget {
   @override
-  _SecondPageState createState() => _SecondPageState();
+  State<SecondPage> createState() => _SecondPageState();
 }
 
 class _SecondPageState extends State<SecondPage> {
@@ -47,27 +45,27 @@ class _SecondPageState extends State<SecondPage> {
 
     return Scaffold(
       appBar: MorphingAppBar(
-        title: Text('Page 2'),
+        title: const Text('Page 2'),
         actions: [
           IconButton(
-            key: ValueKey('check'),
-            icon: Icon(Icons.check),
+            key: const ValueKey('check'),
+            icon: const Icon(Icons.check),
             onPressed: () {},
           ),
           IconButton(
-            key: ValueKey('star'),
-            icon: Icon(Icons.star),
+            key: const ValueKey('star'),
+            icon: const Icon(Icons.star),
             onPressed: () {},
           ),
           IconButton(
-            key: ValueKey('play_arrow'),
-            icon: Icon(Icons.play_arrow),
+            key: const ValueKey('play_arrow'),
+            icon: const Icon(Icons.play_arrow),
             onPressed: () {},
           ),
           PopupMenuButton<void>(
             itemBuilder: (context) => [
-              PopupMenuItem(child: Text('One')),
-              PopupMenuItem(child: Text('Two')),
+              const PopupMenuItem(child: Text('One')),
+              const PopupMenuItem(child: Text('Two')),
             ],
           ),
         ],
@@ -82,9 +80,17 @@ class _SecondPageState extends State<SecondPage> {
                 // You can disable swiping completely using `canSwipe`:
                 setState(() => pageRoute.canSwipe = !pageRoute.canSwipe);
               },
-              child: Text('Toggle'),
+              child: const Text('Toggle'),
             ),
-            SizedBox(height: 32),
+            Text('Can only swipe from edge: ${pageRoute.canOnlySwipeFromEdge}'),
+            TextButton(
+              onPressed: () => setState(
+                () => pageRoute.canOnlySwipeFromEdge =
+                    !pageRoute.canOnlySwipeFromEdge,
+              ),
+              child: const Text('Toggle'),
+            ),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
                 context.navigator.push<void>(SwipeablePageRoute(
@@ -93,7 +99,7 @@ class _SecondPageState extends State<SecondPage> {
                   builder: (_) => ThirdPage(),
                 ));
               },
-              child: Text('Open page 3'),
+              child: const Text('Open page 3'),
             ),
           ],
         ),
@@ -104,7 +110,7 @@ class _SecondPageState extends State<SecondPage> {
 
 class ThirdPage extends StatefulWidget {
   @override
-  _ThirdPageState createState() => _ThirdPageState();
+  State<ThirdPage> createState() => _ThirdPageState();
 }
 
 class _ThirdPageState extends State<ThirdPage>
@@ -117,10 +123,10 @@ class _ThirdPageState extends State<ThirdPage>
     super.initState();
     _tabController = TabController(length: _tabCount, vsync: this);
     _tabController.addListener(() {
-      if (mounted) {
-        final canSwipe = _tabController.index == 0;
-        context.getSwipeablePageRoute<void>()!.canSwipe = canSwipe;
-      }
+      if (!mounted) return;
+
+      final canSwipe = _tabController.index == 0;
+      context.getSwipeablePageRoute<void>()!.canSwipe = canSwipe;
     });
   }
 
@@ -135,27 +141,27 @@ class _ThirdPageState extends State<ThirdPage>
     return Scaffold(
       appBar: MorphingAppBar(
         backgroundColor: Colors.green,
-        title: Text('Page 3'),
+        title: const Text('Page 3'),
         actions: [
           IconButton(
-            key: ValueKey('star'),
-            icon: Icon(Icons.star),
+            key: const ValueKey('star'),
+            icon: const Icon(Icons.star),
             onPressed: () {},
           ),
           IconButton(
-            key: ValueKey('play_arrow'),
-            icon: Icon(Icons.play_arrow),
+            key: const ValueKey('play_arrow'),
+            icon: const Icon(Icons.play_arrow),
             onPressed: () {},
           ),
           IconButton(
-            key: ValueKey('favorite'),
-            icon: Icon(Icons.favorite),
+            key: const ValueKey('favorite'),
+            icon: const Icon(Icons.favorite),
             onPressed: () {},
           ),
           PopupMenuButton<void>(
             itemBuilder: (context) => [
-              PopupMenuItem(child: Text('One')),
-              PopupMenuItem(child: Text('Two')),
+              const PopupMenuItem(child: Text('One')),
+              const PopupMenuItem(child: Text('Two')),
             ],
           ),
         ],
@@ -182,7 +188,7 @@ class _ThirdPageState extends State<ThirdPage>
                       SwipeablePageRoute(builder: (_) => SecondPage()),
                     );
                   },
-                  child: Text('Open page 2'),
+                  child: const Text('Open page 2'),
                 ),
               ],
             ),
