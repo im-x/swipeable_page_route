@@ -64,8 +64,10 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
     super.maintainState,
     super.fullscreenDialog,
     Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
     SwipeableTransitionBuilder? transitionBuilder,
   })  : _transitionDuration = transitionDuration,
+        _reverseTransitionDuration = reverseTransitionDuration,
         transitionBuilder =
             transitionBuilder ?? _defaultTransitionBuilder(fullscreenDialog);
 
@@ -76,6 +78,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
 
   /// An optional override for the [transitionDuration].
   final Duration? _transitionDuration;
+  final Duration? _reverseTransitionDuration;
 
   @override
   Color? get barrierColor => null;
@@ -83,6 +86,10 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   @override
   Duration get transitionDuration =>
       _transitionDuration ?? super.transitionDuration;
+
+  @override
+  Duration get reverseTransitionDuration =>
+      _reverseTransitionDuration ?? super.reverseTransitionDuration;
 
   /// Whether only back gestures close to the left (LTR) or right (RTL) screen
   /// edge are counted.
