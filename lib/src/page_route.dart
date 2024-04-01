@@ -58,6 +58,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
     this.canOnlySwipeFromEdge = false,
     this.backGestureDetectionWidth = kMinInteractiveDimension,
     this.backGestureDetectionStartOffset = 0.0,
+    this.onDragEnd,
     required super.builder,
     super.title,
     super.settings,
@@ -79,6 +80,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   /// An optional override for the [transitionDuration].
   final Duration? _transitionDuration;
   final Duration? _reverseTransitionDuration;
+  final VoidCallback? onDragEnd;
 
   @override
   Color? get barrierColor => null;
@@ -189,11 +191,13 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
   // gesture is detected. The returned controller handles all of the subsequent
   // drag events.
   static _CupertinoBackGestureController<T> _startPopGesture<T>(
-    PageRoute<T> route,
-  ) {
+    PageRoute<T> route, {
+    VoidCallback? onDragEnd,
+  }) {
     return _CupertinoBackGestureController<T>(
       navigator: route.navigator!,
       controller: route.controller!, // protected access
+      onDragEnd: onDragEnd,
     );
   }
 
@@ -215,6 +219,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
       backGestureDetectionWidth: () => backGestureDetectionWidth,
       backGestureDetectionStartOffset: () => backGestureDetectionStartOffset,
       transitionBuilder: transitionBuilder,
+      onDragEnd: onDragEnd,
     );
   }
 
@@ -231,6 +236,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
     ValueGetter<double> backGestureDetectionStartOffset =
         _defaultBackGestureDetectionStartOffset,
     SwipeableTransitionBuilder? transitionBuilder,
+    VoidCallback? onDragEnd,
   }) {
     final Widget wrappedChild;
     if (route.fullscreenDialog) {
@@ -240,7 +246,10 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
         enabledCallback: () => _isPopGestureEnabled(route, canSwipe()),
         onStartPopGesture: () {
           assert(_isPopGestureEnabled(route, canSwipe()));
-          return _startPopGesture(route);
+          return _startPopGesture(
+            route,
+            onDragEnd: onDragEnd,
+          );
         },
         canOnlySwipeFromEdge: canOnlySwipeFromEdge,
         backGestureDetectionWidth: backGestureDetectionWidth,
@@ -419,12 +428,14 @@ class _CupertinoBackGestureController<T> {
   _CupertinoBackGestureController({
     required this.navigator,
     required this.controller,
+    this.onDragEnd,
   }) {
     navigator.didStartUserGesture();
   }
 
   final AnimationController controller;
   final NavigatorState navigator;
+  final VoidCallback? onDragEnd;
 
   /// The drag gesture has changed by [delta]. The total range of the
   /// drag should be 0.0 to 1.0.
@@ -473,7 +484,12 @@ class _CupertinoBackGestureController<T> {
       );
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
-      navigator.pop();
+      if (onDragEnd != null) {
+        navigator.didStopUserGesture();
+        onDragEnd?.call();
+      } else {
+        navigator.pop();
+      }
 
       // The popping may have finished inline if already at the target
       // destination.
