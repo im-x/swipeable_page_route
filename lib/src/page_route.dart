@@ -485,7 +485,6 @@ class _CupertinoBackGestureController<T> {
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       if (onDragEnd != null) {
-        navigator.didStopUserGesture();
         onDragEnd?.call();
       } else {
         navigator.pop();
@@ -509,7 +508,7 @@ class _CupertinoBackGestureController<T> {
       }
     }
 
-    if (controller.isAnimating) {
+    if (controller.isAnimating && onDragEnd == null) {
       // Keep the userGestureInProgress in true state so we don't change the
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
