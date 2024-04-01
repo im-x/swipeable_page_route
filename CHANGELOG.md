@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- Template:
-## NEW · 2023-xx-xx
+## NEW · 2024-xx-xx
 
 ### ⚠️ BREAKING CHANGES
 ### 🎉 New Features
@@ -15,6 +15,27 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 🏗️ Refactoring
 ### 📦 Build & CI
 -->
+
+## 0.4.2 · 2024-01-20
+
+### 🎉 New Features
+- handle new `pageRoute.popDisposition` ([`9cee84a`](https://github.com/JonasWanke/swipeable_page_route/commit/9cee84a1c12e50f91c46c0a2487d155f5183fe6e))
+- expose `swipeablePageRoute.`, `swipeablePage.reverseTransitionDuration` ([`4f6e398`](https://github.com/JonasWanke/swipeable_page_route/commit/4f6e398a17f117b058d7162e4a94ba23d1f1ce99)), closes [#38](https://github.com/JonasWanke/swipeable_page_route/issues/38)
+
+### 📦 Build & CI
+- upgrade to Flutter `>=3.16.0` ([`8dd381c`](https://github.com/JonasWanke/swipeable_page_route/commit/8dd381c1f046fc30490c5457e7fce3a73926e772)), closes [#36](https://github.com/JonasWanke/swipeable_page_route/issues/36)
+
+## 0.4.1 · 2023-12-30
+
+### 🎉 New Features
+- add `SwipeablePage` and a [Go Router](https://pub.dev/packages/go_router) example ([`ea49c3e`](https://github.com/JonasWanke/swipeable_page_route/commit/ea49c3e598e6a5e506ead98b5220a578b2ff749b)), closes [#29](https://github.com/JonasWanke/swipeable_page_route/issues/29). Thanks to [@110](https://github.com/110), [@kamranbekirovyz](https://github.com/kamranbekirovyz), and [@gustavjohansen98](https://github.com/gustavjohansen98) for exploring this!
+- expose `swipeablePageRoute.allowSnapshotting`, `.barrierDismissible` ([#35](https://github.com/JonasWanke/swipeable_page_route/pull/35)). Thanks to [@MagTuxGit](https://github.com/MagTuxGit)!
+
+### ⚡ Changes
+- interpolate colors in the [Oklab color space](https://bottosson.github.io/posts/oklab/) instead of HSV ([`65f2a5d`](https://github.com/JonasWanke/swipeable_page_route/commit/65f2a5d60b12ed127a99497e713f0257ad7b7c03))
+
+### 🐛 Bug Fixes
+- honor `themeData.useMaterial3` with different defaults compared to Material 2 ([`cc98d3f`](https://github.com/JonasWanke/swipeable_page_route/commit/cc98d3f3ea0539c1eeb8c013dc425d2443283ed7))
 
 ## 0.4.0 · 2023-05-30
 
