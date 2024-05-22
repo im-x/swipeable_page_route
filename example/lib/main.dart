@@ -1,20 +1,54 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
+import 'go_router.dart';
+
 void main() => runApp(MyApp());
+
+enum NavigationMode {
+  navigator,
+  goRouter,
+  goRouterBuilder;
+
+  /// Change this value to switch between the navigation modes.
+  static const current = NavigationMode.navigator;
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '🔙 swipeable_page_route example',
-      home: FirstPage(),
+    const title = '🔙 swipeable_page_route example';
+    final theme = ThemeData(
+      appBarTheme: const AppBarTheme(
+        color: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
     );
+
+    return switch (NavigationMode.current) {
+      NavigationMode.navigator => MaterialApp(
+          title: title,
+          theme: theme,
+          home: const FirstPage(),
+        ),
+      NavigationMode.goRouter => MaterialApp.router(
+          title: title,
+          theme: theme,
+          routerConfig: goRouter,
+        ),
+      NavigationMode.goRouterBuilder => MaterialApp.router(
+          title: title,
+          theme: theme,
+          routerConfig: goRouterBuilder,
+        ),
+    };
   }
 }
 
 class FirstPage extends StatelessWidget {
+  const FirstPage();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,16 +57,26 @@ class FirstPage extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () async => context.navigator
-              .push<void>(SwipeablePageRoute(builder: (_) => SecondPage())),
+          onPressed: () async => _pushSecondPage(context),
           child: const Text('Open page 2'),
         ),
       ),
     );
   }
+
+  Future<void> _pushSecondPage(BuildContext context) async {
+    return switch (NavigationMode.current) {
+      NavigationMode.navigator => Navigator.of(context)
+          .push<void>(SwipeablePageRoute(builder: (_) => const SecondPage())),
+      NavigationMode.goRouter => GoRouter.of(context).push<void>('/page2'),
+      NavigationMode.goRouterBuilder => SecondPageRoute().push(context),
+    };
+  }
 }
 
 class SecondPage extends StatefulWidget {
+  const SecondPage();
+
   @override
   State<SecondPage> createState() => _SecondPageState();
 }
@@ -92,13 +136,7 @@ class _SecondPageState extends State<SecondPage> {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () async {
-                await context.navigator.push<void>(SwipeablePageRoute(
-                  // You can customize the width of the detection area with
-                  // `backGestureDetectionWidth`.
-                  builder: (_) => ThirdPage(),
-                ));
-              },
+              onPressed: () async => _pushThirdPage(context),
               child: const Text('Open page 3'),
             ),
           ],
@@ -106,9 +144,20 @@ class _SecondPageState extends State<SecondPage> {
       ),
     );
   }
+
+  Future<void> _pushThirdPage(BuildContext context) async {
+    return switch (NavigationMode.current) {
+      NavigationMode.navigator => Navigator.of(context)
+          .push<void>(SwipeablePageRoute(builder: (_) => const ThirdPage())),
+      NavigationMode.goRouter => GoRouter.of(context).push<void>('/page3'),
+      NavigationMode.goRouterBuilder => ThirdPageRoute().push(context),
+    };
+  }
 }
 
 class ThirdPage extends StatefulWidget {
+  const ThirdPage();
+
   @override
   State<ThirdPage> createState() => _ThirdPageState();
 }
@@ -183,11 +232,7 @@ class _ThirdPageState extends State<ThirdPage>
               children: [
                 Text('This is tab ${i + 1}'),
                 ElevatedButton(
-                  onPressed: () async {
-                    await context.navigator.push<void>(
-                      SwipeablePageRoute(builder: (_) => SecondPage()),
-                    );
-                  },
+                  onPressed: () async => _pushSecondPage(context),
                   child: const Text('Open page 2'),
                 ),
               ],
@@ -195,5 +240,14 @@ class _ThirdPageState extends State<ThirdPage>
         ],
       ),
     );
+  }
+
+  Future<void> _pushSecondPage(BuildContext context) async {
+    return switch (NavigationMode.current) {
+      NavigationMode.navigator => Navigator.of(context)
+          .push<void>(SwipeablePageRoute(builder: (_) => const SecondPage())),
+      NavigationMode.goRouter => GoRouter.of(context).push<void>('/page2'),
+      NavigationMode.goRouterBuilder => SecondPageRoute().push(context),
+    };
   }
 }

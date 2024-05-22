@@ -1,3 +1,5 @@
+.direnv/
+
 ### Dart ###
 
 # Files and directories created by pub
@@ -10,7 +12,3 @@ build/
 
 # Directory created by dartdoc
 doc/api/
-
-# Generated dart files
-*.g.dart
-*.pb*.dart

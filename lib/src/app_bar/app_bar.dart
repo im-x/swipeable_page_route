@@ -21,7 +21,10 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.flexibleSpace,
     this.bottom,
     this.elevation,
+    this.scrolledUnderElevation,
+    this.notificationPredicate = defaultScrollNotificationPredicate,
     this.shadowColor,
+    this.surfaceTintColor,
     this.shape,
     this.backgroundColor,
     this.foregroundColor,
@@ -38,6 +41,8 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.toolbarTextStyle,
     this.titleTextStyle,
     this.systemOverlayStyle,
+    this.forceMaterialTransparency = false,
+    this.clipBehavior,
   })  : assert(elevation == null || elevation >= 0.0),
         preferredSize = Size.fromHeight(
           toolbarHeight ?? kToolbarHeight + (bottom?.preferredSize.height ?? 0),
@@ -68,8 +73,17 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// See [AppBar.elevation]
   final double? elevation;
 
+  /// See [AppBar.scrolledUnderElevation]
+  final double? scrolledUnderElevation;
+
+  /// See [AppBar.notificationPredicate]
+  final ScrollNotificationPredicate notificationPredicate;
+
   /// See [AppBar.shadowColor]
   final Color? shadowColor;
+
+  /// See [AppBar.surfaceTintColor]
+  final Color? surfaceTintColor;
 
   /// See [AppBar.shape]
   final ShapeBorder? shape;
@@ -122,15 +136,23 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// See [AppBar.systemOverlayStyle]
   final SystemUiOverlayStyle? systemOverlayStyle;
 
+  /// See [AppBar.forceMaterialTransparency]
+  final bool forceMaterialTransparency;
+
+  /// See [AppBar.clipBehavior]
+  final Clip? clipBehavior;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
 
     final actualBackgroundColor = backgroundColor ??
         theme.appBarTheme.backgroundColor ??
-        (theme.colorScheme.brightness == Brightness.dark
+        (theme.useMaterial3
             ? theme.colorScheme.surface
-            : theme.colorScheme.primary);
+            : theme.colorScheme.brightness == Brightness.dark
+                ? theme.colorScheme.surface
+                : theme.colorScheme.primary);
     final actualSystemOverlayStyle = systemOverlayStyle ??
         context.theme.appBarTheme.systemOverlayStyle ??
         actualBackgroundColor.contrastSystemUiOverlayStyle;
@@ -147,7 +169,10 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
         flexibleSpace: flexibleSpace,
         bottom: bottom,
         elevation: elevation,
+        scrolledUnderElevation: scrolledUnderElevation,
+        notificationPredicate: notificationPredicate,
         shadowColor: shadowColor,
+        surfaceTintColor: surfaceTintColor,
         shape: shape,
         backgroundColor: actualBackgroundColor,
         foregroundColor: foregroundColor,
@@ -164,6 +189,8 @@ class MorphingAppBar extends StatelessWidget implements PreferredSizeWidget {
         toolbarTextStyle: toolbarTextStyle,
         titleTextStyle: titleTextStyle,
         systemOverlayStyle: actualSystemOverlayStyle,
+        forceMaterialTransparency: forceMaterialTransparency,
+        clipBehavior: clipBehavior,
       ),
     );
   }
@@ -223,7 +250,10 @@ class _AnimatedAppBar extends AnimatedWidget {
       // TODO(JonasWanke): Animate `flexibleSpace`
       bottom: AnimatedBottom(state),
       elevation: state.elevation,
+      scrolledUnderElevation: state.scrolledUnderElevation,
+      notificationPredicate: state.notificationPredicate,
       shadowColor: state.shadowColor,
+      surfaceTintColor: state.surfaceTintColor,
       shape: state.shape,
       backgroundColor: state.backgroundColor,
       foregroundColor: state.foregroundColor,
@@ -242,6 +272,8 @@ class _AnimatedAppBar extends AnimatedWidget {
       toolbarTextStyle: state.toolbarTextStyle,
       titleTextStyle: state.titleTextStyle,
       systemOverlayStyle: state.systemOverlayStyle,
+      forceMaterialTransparency: state.forceMaterialTransparency,
+      clipBehavior: state.clipBehavior,
     );
   }
 }
