@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
@@ -53,7 +55,15 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MorphingAppBar(
+        leading: const Icon(Icons.menu),
         title: const Text('🔙 swipeable_page_route example'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF005C9D), Color(0xff0078C1), Color(0xFF0995E0)],
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: ElevatedButton(
@@ -90,6 +100,13 @@ class _SecondPageState extends State<SecondPage> {
     return Scaffold(
       appBar: MorphingAppBar(
         title: const Text('Page 2'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFFF5733), Color(0xFFC70039), Color(0xFF900C3F)],
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             key: const ValueKey('check'),
