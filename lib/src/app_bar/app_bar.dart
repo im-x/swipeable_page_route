@@ -276,7 +276,8 @@ class _AnimatedAppBar extends AnimatedWidget {
       forceMaterialTransparency: state.forceMaterialTransparency,
       clipBehavior: state.clipBehavior,
     );
-    if (state.flexibleSpaceBarSettings case final settings?) {
+    if (state.flexibleSpaceBarSettings != null) {
+      final settings = state.flexibleSpaceBarSettings!;
       child = FlexibleSpaceBar.createSettings(
         toolbarOpacity: settings.toolbarOpacity,
         minExtent: settings.minExtent,

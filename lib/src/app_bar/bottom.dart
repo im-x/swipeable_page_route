@@ -92,11 +92,11 @@ class AnimatedBottom extends AnimatedAppBarPart implements PreferredSizeWidget {
       end: Alignment.bottomCenter,
       colors: [
         if (hasParent && hasChild)
-          Colors.white.withValues(alpha: triangleT)
+          Colors.white.withAlpha((triangleT * 255).round())
         else if (hasParent)
-          Colors.white.withValues(alpha: t)
+          Colors.white.withAlpha((t * 255).round())
         else if (hasChild)
-          Colors.white.withValues(alpha: 1 - t),
+          Colors.white.withAlpha(((1 - t) * 255).round()),
         Colors.white.withAlpha(0),
       ],
       stops: [

@@ -22,7 +22,7 @@ class AnimatedTitle extends MultiChildRenderObjectWidget {
     var style = state.titleTextStyle;
     if (style?.color != null) {
       style = style!.copyWith(
-        color: style.color!.withValues(alpha: state.opacity),
+        color: style.color!.withOpacity(state.opacity),
       );
     }
 

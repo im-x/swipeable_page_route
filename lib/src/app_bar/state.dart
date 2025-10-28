@@ -128,9 +128,9 @@ class MorphingState {
 extension type _OklabColor(
     ({double alpha, double l, double a, double b}) components) {
   factory _OklabColor.fromRgb(Color color) {
-    final r = _srgbComponentToLinear(color.r);
-    final g = _srgbComponentToLinear(color.g);
-    final b = _srgbComponentToLinear(color.b);
+    final r = _srgbComponentToLinear(color.red / 255.0);
+    final g = _srgbComponentToLinear(color.green / 255.0);
+    final b = _srgbComponentToLinear(color.blue / 255.0);
 
     // https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
 
@@ -230,7 +230,7 @@ class EndState {
             .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
 
   final ThemeData theme;
-  AppBarTheme get appBarTheme => theme.appBarTheme;
+  AppBarThemeData get appBarTheme => theme.appBarTheme;
   final FlexibleSpaceBarSettings? flexibleSpaceBarSettings;
 
   final AppBar appBar;

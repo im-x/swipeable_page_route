@@ -78,7 +78,7 @@ class SwipeablePageRoute<T> extends CupertinoPageRoute<T> {
         transitionBuilder =
             transitionBuilder ?? _defaultTransitionBuilder(fullscreenDialog);
 
-final VoidCallback? onDragEnd;
+  final VoidCallback? onDragEnd;
 
   /// {@template swipeable_page_route.SwipeablePageRoute.canSwipe}
   /// Whether the user can swipe to navigate back.
@@ -95,7 +95,6 @@ final VoidCallback? onDragEnd;
   /// If set to `true`, this distance can be controlled via
   /// [backGestureDetectionWidth].
   /// If set to `false`, the user can start dragging anywhere on the screen.
-  /// {@endtemplate}
   bool canOnlySwipeFromEdge;
 
   // ignore: lines_longer_than_80_chars
